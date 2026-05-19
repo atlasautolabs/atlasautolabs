@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas Auto Labs — Your Personal Car Advisor</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f2ee;
+    --red: #c8392b;
+    --red-dark: #9e2d21;
+    --mid: #1c1c1c;
+    --muted: #6b6560;
+    --border: #2a2a2a;
+    --cream: #f0ece6;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--red); }
+  .nav-cta {
+    background: var(--red);
+    color: var(--white);
+    padding: 10px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--red-dark); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(200,57,43,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 48px 80px 48px;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 7vw, 104px);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-title em {
+    color: var(--red);
+    font-style: normal;
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    font-weight: 300;
+    color: #aaa;
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-sub strong { color: var(--white); font-weight: 500; }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .btn-primary {
+    background: var(--red);
+    color: var(--white);
+    padding: 16px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--red-dark); transform: translateY(-1px); }
+
+  .btn-ghost {
+    color: #888;
+    font-size: 14px;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--white); border-color: var(--white); }
+
+  .hero-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 48px;
+    position: relative;
+    opacity: 0;
+    animation: fadeIn 1.2s 1s forwards;
+  }
+
+  .hero-card {
+    background: var(--mid);
+    border: 1px solid var(--border);
+    padding: 40px;
+    width: 100%;
+    max-width: 380px;
+    position: relative;
+  }
+
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 40px; right: 40px;
+    height: 3px;
+    background: var(--red);
+  }
+
+  .card-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 20px;
+  }
+
+  .card-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    line-height: 1;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .card-price-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  .card-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  .card-feature-dot {
+    width: 6px; height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
+
+  .card-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+
+  .card-deposit {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .card-deposit strong { color: var(--white); }
+
+  /* ── PROBLEM ── */
+  .section-problem {
+    padding: 120px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 5vw, 68px);
+    line-height: 0.95;
+    letter-spacing: 1px;
+    margin-bottom: 48px;
+  }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .problem-item {
+    background: var(--black);
+    padding: 40px 32px;
+    transition: background 0.2s;
+  }
+  .problem-item:hover { background: var(--mid); }
+
+  .problem-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .problem-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .problem-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .section-how {
+    padding: 120px 48px;
+    background: var(--mid);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .how-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    margin-top: 64px;
+  }
+
+  .how-step {
+    position: relative;
+  }
+
+  .how-step::after {
+    content: '→';
+    position: absolute;
+    top: 8px;
+    right: -24px;
+    color: var(--border);
+    font-size: 20px;
+  }
+  .how-step:last-child::after { display: none; }
+
+  .how-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--red);
+    margin-bottom: 20px;
+  }
+
+  .how-title {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .how-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ── WHY ── */
+  .section-why {
+    padding: 120px 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .why-left .section-title { margin-bottom: 24px; }
+
+  .why-body {
+    font-size: 16px;
+    color: #aaa;
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+
+  .why-body strong { color: var(--white); font-weight: 500; }
+
+  .why-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .why-stat {
+    background: var(--black);
+    padding: 32px;
+    transition: background 0.2s;
+  }
+  .why-stat:hover { background: var(--mid); }
+
+  .why-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .why-stat-label {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* ── CTA ── */
+  .section-cta {
+    padding: 120px 48px;
+    background: var(--red);
+    text-align: center;
+  }
+
+  .cta-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 6vw, 88px);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+
+  .cta-sub {
+    font-size: 17px;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 48px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .btn-white {
+    background: var(--white);
+    color: var(--red);
+    padding: 18px 48px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-block;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .btn-white:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .cta-email {
+    display: block;
+    margin-top: 20px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+  }
+  .cta-email a { color: rgba(255,255,255,0.85); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.3); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--black);
+    border-top: 1px solid var(--border);
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 3px;
+    color: var(--white);
+  }
+  .footer-logo span { color: var(--red); }
+
+  .footer-copy {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .footer-email {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-email:hover { color: var(--white); }
+
+  /* ── DIVIDER LINE ── */
+  .rule {
+    width: 48px;
+    height: 2px;
+    background: var(--red);
+    margin-bottom: 32px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 100px; }
+    .hero-left { padding: 60px 24px 40px; }
+    .hero-right { padding: 0 24px 60px; }
+    .hero-card { max-width: 100%; }
+    .section-problem, .section-how, .section-cta { padding: 80px 24px; }
+    .section-why { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px; }
+    .problem-grid { grid-template-columns: 1fr; }
+    .how-grid { grid-template-columns: 1fr 1fr; }
+    .how-step::after { display: none; }
+    footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 24px; }
+  }
+
+  @media (max-width: 560px) {
+    .how-grid { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">ATLAS<span>AUTO</span>LABS</a>
+  <a href="mailto:atlasautolabs@gmail.com" class="nav-cta">Book a Consultation</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">GTA's Personal Car Advisor</p>
+    <h1 class="hero-title">BUY THE<br><em>RIGHT CAR.</em><br>PAY THE<br>RIGHT PRICE.</h1>
+    <p class="hero-sub">
+      Atlas Auto Labs brings <strong>clarity to the car buying process</strong> — so you save money and drive away confident you made the right decision.
+    </p>
+    <div class="hero-actions">
+      <a href="mailto:atlasautolabs@gmail.com" class="btn-primary">Start Your Free Consultation</a>
+      <a href="#how" class="btn-ghost">See how it works</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-card">
+      <p class="card-label">Flat Fee. No Surprises.</p>
+      <p class="card-price">$499</p>
+      <p class="card-price-sub">Total fee — $250 due upfront, $249 on completion</p>
+      <div class="card-feature">
+        <div class="card-feature-dot"></div>
+        <span>Free initial consultation — no commitment</span>
+      </div>
+      <div class="card-feature">
+        <div class="card-feature-dot"></div>
+        <span>I work for you — not the dealer</span>
+      </div>
+      <div class="card-feature">
+        <div class="card-feature-dot"></div>
+        <span>Vehicle sourcing, inspection & negotiation</span>
+      </div>
+      <div class="card-feature">
+        <div class="card-feature-dot"></div>
+        <span>Licensed OMVIC automotive professional</span>
+      </div>
+      <div class="card-feature">
+        <div class="card-feature-dot"></div>
+        <span>GTA-wide coverage</span>
+      </div>
+      <div class="card-divider"></div>
+      <p class="card-deposit">On a $20,000 purchase, saving just <strong>2.5%</strong> covers the entire fee. Most clients save significantly more.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section-problem">
+  <p class="section-label">The Problem</p>
+  <div class="rule"></div>
+  <h2 class="section-title">THE CAR BUYING PROCESS<br>IS BROKEN.</h2>
+  <div class="problem-grid">
+    <div class="problem-item">
+      <p class="problem-num">01</p>
+      <p class="problem-title">Dealers Work Against You</p>
+      <p class="problem-desc">Every salesperson at a dealership is trained to maximize their profit — not help you find the right car at the right price. You're negotiating blind.</p>
+    </div>
+    <div class="problem-item">
+      <p class="problem-num">02</p>
+      <p class="problem-title">Private Sales Are Risky</p>
+      <p class="problem-desc">Kijiji and Facebook are full of hidden problems, odometer rollbacks, and rebuilt titles. Without expertise, you can't tell the good from the bad.</p>
+    </div>
+    <div class="problem-item">
+      <p class="problem-num">03</p>
+      <p class="problem-title">You Only Do This Once</p>
+      <p class="problem-desc">Most people buy a car every 5-7 years. Dealers do this every single day. The experience gap is enormous — and it costs you thousands.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section-how" id="how">
+  <div class="how-inner">
+    <p class="section-label">The Process</p>
+    <div class="rule"></div>
+    <h2 class="section-title">HOW ATLAS AUTO LABS WORKS</h2>
+    <div class="how-grid">
+      <div class="how-step">
+        <p class="how-num">STEP 01</p>
+        <p class="how-title">Free Consultation</p>
+        <p class="how-desc">We talk about what you need, your budget, and your lifestyle. No pressure, no commitment. Just clarity on what the right car actually looks like for you.</p>
+      </div>
+      <div class="how-step">
+        <p class="how-num">STEP 02</p>
+        <p class="how-title">We Source Options</p>
+        <p class="how-desc">I leverage my professional network and market access to find the best options — dealers, private sellers, and auctions you'd never find on your own.</p>
+      </div>
+      <div class="how-step">
+        <p class="how-num">STEP 03</p>
+        <p class="how-title">Inspect & Evaluate</p>
+        <p class="how-desc">I inspect every vehicle before you see it. I know what to look for — mechanical issues, accident history, pricing red flags. You see only the best options.</p>
+      </div>
+      <div class="how-step">
+        <p class="how-num">STEP 04</p>
+        <p class="how-title">Negotiate & Close</p>
+        <p class="how-desc">I handle the negotiation. With professional knowledge of real market value, I get you the best possible price — and you drive away with confidence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="section-why">
+  <div class="why-left">
+    <p class="section-label">Why Atlas Auto Labs</p>
+    <div class="rule"></div>
+    <h2 class="section-title">100% ON<br>YOUR SIDE.</h2>
+    <p class="why-body">Unlike a dealership salesperson, <strong>I have no incentive to sell you any particular car.</strong> My only job is to make sure you end up with the right vehicle at the right price.</p>
+    <p class="why-body">With a background in sales and automotive consulting, I understand exactly how dealers think — and how to negotiate against them on your behalf.</p>
+    <p class="why-body">Based in the <strong>Greater Toronto Area</strong>, serving buyers across the GTA.</p>
+  </div>
+  <div class="why-right">
+    <div class="why-stat">
+      <p class="why-stat-num">$2–5K</p>
+      <p class="why-stat-label">Typical savings on a used car purchase when negotiated professionally</p>
+    </div>
+    <div class="why-stat">
+      <p class="why-stat-num">100%</p>
+      <p class="why-stat-label">Working exclusively for the buyer — never the seller or dealer</p>
+    </div>
+    <div class="why-stat">
+      <p class="why-stat-num">$499</p>
+      <p class="why-stat-label">Flat fee. No commissions. No hidden costs. No surprises.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta">
+  <h2 class="cta-title">READY TO BUY<br>WITH CONFIDENCE?</h2>
+  <p class="cta-sub">Start with a free, no-obligation consultation. Tell us what you're looking for and we'll take it from there.</p>
+  <a href="mailto:atlasautolabs@gmail.com" class="btn-white">Book Your Free Consultation</a>
+  <span class="cta-email">Or email us directly: <a href="mailto:atlasautolabs@gmail.com">atlasautolabs@gmail.com</a></span>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-logo">ATLAS<span>AUTO</span>LABS</p>
+  <p class="footer-copy">© 2026 Atlas Auto Labs. Greater Toronto Area.</p>
+  <a href="mailto:atlasautolabs@gmail.com" class="footer-email">atlasautolabs@gmail.com</a>
+</footer>
+
+</body>
+</html>
